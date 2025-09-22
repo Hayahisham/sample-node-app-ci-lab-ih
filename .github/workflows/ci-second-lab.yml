@@ -37,30 +37,30 @@ node-version: ${{ matrix.node-version }}
          npm run build 2>/dev/null || echo "No build script found, skipping build step"
 
      - name:Run unit tests with coverage and JUnit reports
-       # If you're using jest-junit, this env var makes sure the XML lands where the reporter expects.
+      
        env:
          JEST_JUNIT_OUTPUT: coverage/junit.xml
-       run: npm run test:ci || true
+       run:npm run test:ci || true
 
-     - name: Publish test results to Checks
-       uses: dorny/test-reporter@v1
-       if: always()
+     - name:Publish test results to Checks
+       uses:dorny/test-reporter@v1
+       if:always()
        with:
-         name: Jest Test Results
-         path: coverage/junit.xml
-         reporter: jest-junit
-         fail-on-error: false
+         name:Jest Test Results
+         path:coverage/junit.xml
+         reporter:jest-junit
+         fail-on-error:false
 
-     - name: Upload test results to GitHub
-       uses: actions/upload-artifact@v4
-       if: always()
+     - name:Upload test results to GitHub
+       uses:actions/upload-artifact@v4
+       if:always()
        with:
-         name: test-results-node-${{ matrix.node-version }}
-         path: coverage/
+         name:test-results-node-${{ matrix.node-version }}
+         path:coverage/
          retention-days: 30
 
-     - name: Create deployment package
-       run: |
+     - name:Create deployment package
+       run:|
          set -euo pipefail
          STAGING="$GITHUB_WORKSPACE/deployment-package"
          rm -rf "$STAGING"
