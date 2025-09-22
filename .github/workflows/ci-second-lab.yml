@@ -26,17 +26,17 @@ jobs:
        uses: actions/setup-node@v4
        with:
 node-version: ${{ matrix.node-version }}
-         cache: 'npm'
-         cache-dependency-path: 'package-lock.json'
+         cache:'npm'
+         cache-dependency-path:'package-lock.json'
 
-     - name: Install dependencies
-       run: npm ci
+     - name:Install dependencies
+       run:npm ci
 
-     - name: Build the application (optional)
-       run: |
+     - name:Build the application (optional)
+       run:|
          npm run build 2>/dev/null || echo "No build script found, skipping build step"
 
-     - name: Run unit tests with coverage and JUnit reports
+     - name:Run unit tests with coverage and JUnit reports
        # If you're using jest-junit, this env var makes sure the XML lands where the reporter expects.
        env:
          JEST_JUNIT_OUTPUT: coverage/junit.xml
