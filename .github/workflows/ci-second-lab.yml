@@ -38,7 +38,7 @@ node-version: ${{ matrix.node-version }}
 
      - name:Run unit tests with coverage and JUnit reports
       
-       .env:
+       .env;
          JEST_JUNIT_OUTPUT: coverage/junit.xml
        run:npm run test:ci || true
 
