@@ -45,14 +45,14 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
+          tags: >
             docker.io/${{ secrets.DOCKERHUB_USERNAME }}/nodeapp:latest
             docker.io/${{ secrets.DOCKERHUB_USERNAME }}/nodeapp:${{ github.sha }}
 
       - name: Azure Login (Service Principal)
   uses: azure/login@v2
   with:
-    creds: |
+    creds: >
       {
         "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
         "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
