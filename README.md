@@ -1,4 +1,4 @@
-# DevOps Bootcamp Showcase
+# DevOps Bootcamp Showcase haya
 
 A modern, responsive static website showcasing a DevOps bootcamp program. Built with Node.js, Express, and vanilla JavaScript following best practices.
 
@@ -207,3 +207,4 @@ For support or questions, please contact:
 ---
 
 Built with ❤️ for the DevOps community
+
