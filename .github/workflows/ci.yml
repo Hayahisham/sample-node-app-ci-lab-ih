@@ -1,7 +1,8 @@
 name: Build, Test, and Deploy to Azure Container Apps
 
 on:
-  # Manual trigger from the Actions tab
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -9,7 +10,6 @@ permissions:
   actions: read
   checks: write
   pull-requests: write
-  # If you plan to switch to OIDC later, keep id-token: write
   id-token: write
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version: '22'
           cache: npm
           cache-dependency-path: package-lock.json
 
@@ -34,33 +34,32 @@ jobs:
       - name: Run unit tests (if present)
         run: npm test --if-present
 
-      - name: Build the application (optional)
-        run: npm run build 2>/dev/null || echo "No build step; continuing."
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/nodeapp:latest
+            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/nodeapp:${{ github.sha }}
 
       - name: Azure Login (Service Principal)
-        # If you adopt OIDC later, switch to federated creds and drop client-secret
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      - name: Build, push image to Docker Hub and deploy to ACA
+      - name: Deploy to Azure Container Apps
         uses: azure/container-apps-deploy-action@v2
         with:
-          appSourcePath: ${{ github.workspace }}
-          # Uncomment if your Dockerfile isn't at repo root
-          # dockerfilePath: ./Dockerfile
-          # target: <multi-stage-target-name-if-any>
-
-          registryUrl: docker.io
-          registryUsername: ${{ secrets.DOCKERHUB_USERNAME }}
-          registryPassword: ${{ secrets.DOCKERHUB_TOKEN }}
-
-          # Azure targets
-          resourceGroup: container-labs-rg
+          resourceGroup: Haya-container-labs-rg
           containerAppName: frontendapp
-
-          # Image tag = commit SHA for traceability
-          imageToBuild: ${{ secrets.DOCKERHUB_USERNAME }}/frontendapp-node:${{ github.sha }}
+          imageToDeploy: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/nodeapp:${{ github.sha }}
