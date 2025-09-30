@@ -95,18 +95,15 @@ jobs:
           (cd "$GITHUB_WORKSPACE" && zip -r "$ZIP_NAME" "deployment-package")
           echo "ZIP_NAME=$ZIP_NAME" >> "$GITHUB_ENV"
       - name: Azure login (client secret)
-=======
+
       - name: Azure Login (Service Principal)
-        # If you adopt OIDC later, switch to federated creds and drop client-secret
->>>>>>> ee55132 (ci: docker update)
+        
+
         uses: azure/login@v2
-        # ------------------------------------
-        # ------- !!!!!!انتبهوا هنا ----------
         with:
-<<<<<<< HEAD
-          # Check the naming of your CREDENTIALS secrets and change it
+
           creds: ${{ secrets.AZURE_CREDS }}
-        # ------------------------------------
+       
 
       - name: Upload deployment package artifact
         uses: actions/upload-artifact@v4.6.2
@@ -269,7 +266,6 @@ jobs:
 
          # Restart to pull the new image immediately
          az webapp restart -g "${{ env.AZURE_RESOURCE_GROUP }}" -n "${{ env.AZURE_WEBAPP_NAME }}"
-=======
           creds: ${{secrets.AZURE_CREDS}}
 
       - name: Build, push image to Docker Hub and deploy to ACA
@@ -287,7 +283,5 @@ jobs:
           # Azure targets
           resourceGroup: container-labs-rg
           containerAppName: frontendapp
->>>>>>> ee55132 (ci: docker update)
-
           # Image tag = commit SHA for traceability
           imageToBuild: ${{ secrets.DOCKERHUB_USERNAME }}/frontendapp-node:${{ github.sha }}
