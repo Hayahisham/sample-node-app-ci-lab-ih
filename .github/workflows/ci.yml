@@ -1,4 +1,4 @@
-name: Lab 3 (Online) or Lab 1 (Onsite)
+name: ci pipeline
 
 on:
   workflow_dispatch:
@@ -40,6 +40,7 @@ jobs:
       #     JEST_JUNIT_OUTPUT: coverage/junit.xml
       #   run: npm run test:ci
 
+<<<<<<< HEAD
       # - name: Publish test results to Checks
       #   uses: dorny/test-reporter@v2.1.1
       #   if: always()
@@ -94,10 +95,15 @@ jobs:
           (cd "$GITHUB_WORKSPACE" && zip -r "$ZIP_NAME" "deployment-package")
           echo "ZIP_NAME=$ZIP_NAME" >> "$GITHUB_ENV"
       - name: Azure login (client secret)
+=======
+      - name: Azure Login (Service Principal)
+        # If you adopt OIDC later, switch to federated creds and drop client-secret
+>>>>>>> ee55132 (ci: docker update)
         uses: azure/login@v2
         # ------------------------------------
         # ------- !!!!!!انتبهوا هنا ----------
         with:
+<<<<<<< HEAD
           # Check the naming of your CREDENTIALS secrets and change it
           creds: ${{ secrets.AZURE_CREDS }}
         # ------------------------------------
@@ -263,4 +269,25 @@ jobs:
 
          # Restart to pull the new image immediately
          az webapp restart -g "${{ env.AZURE_RESOURCE_GROUP }}" -n "${{ env.AZURE_WEBAPP_NAME }}"
+=======
+          creds: ${{secrets.AZURE_CREDS}}
 
+      - name: Build, push image to Docker Hub and deploy to ACA
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}
+          # Uncomment if your Dockerfile isn't at repo root
+          # dockerfilePath: ./Dockerfile
+          # target: <multi-stage-target-name-if-any>
+
+          registryUrl: docker.io
+          registryUsername: ${{ secrets.DOCKERHUB_USERNAME }}
+          registryPassword: ${{ secrets.DOCKERHUB_TOKEN }}
+
+          # Azure targets
+          resourceGroup: container-labs-rg
+          containerAppName: frontendapp
+>>>>>>> ee55132 (ci: docker update)
+
+          # Image tag = commit SHA for traceability
+          imageToBuild: ${{ secrets.DOCKERHUB_USERNAME }}/frontendapp-node:${{ github.sha }}
